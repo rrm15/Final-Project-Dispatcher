@@ -1,0 +1,6 @@
+{
+  "Name": "Final Project Dispatcher",
+  "ProjectType": "Process",
+  "Description": "",
+  "MainFile": "AddTestQueueItem.xaml"
+}
