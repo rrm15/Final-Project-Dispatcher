@@ -81,17 +81,17 @@ Final Project Dispatcher/
 
 The CSV file (`Sample_Student_Data.csv`) contains **17 columns**:
 
-| Column | Description | Type | Example |
-|--------|-------------|------|---------|
-| Name | Student's full name | String | Sharukeshwar P |
-| RollNumber | Unique student identifier | String | 220701265 |
-| DOB | Date of birth | String | 15-Jan-2004 |
-| Semester | Academic semester | String | Fall 2024 |
-| Year | Academic year | String | 2024 |
-| Department | Department name | String | Computer Science |
-| Subject1 - Subject5 | Subject names | String | Data Structures, Database Management, etc. |
-| Mark1 - Mark5 | Corresponding marks | Integer | 95, 88, 82, 75, 92 |
-| Email | Student email address | String | 220701265@rajalakshmi.edu.in |
+| Column | Description | Type |
+|--------|-------------|------|
+| Name | Student's full name | String |
+| RollNumber | Unique student identifier | String |
+| DOB | Date of birth | String |
+| Semester | Academic semester | String |
+| Year | Academic year | String |
+| Department | Department name | String |
+| Subject1 - Subject5 | Subject names | String |
+| Mark1 - Mark5 | Corresponding marks | Integer |
+| Email | Student email address | String |
 
 ### Sample Data
 
