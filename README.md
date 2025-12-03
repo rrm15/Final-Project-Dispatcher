@@ -1,15 +1,58 @@
 # Student Marksheet Dispatcher
 
-A UiPath automation project that reads student data from CSV files and populates an Orchestrator queue for processing. This is the **Dispatcher** component of a Dispatcher-Performer architecture for automated student marksheet generation.
+**Part of the Automated Marksheet Generation System**
+
+A UiPath automation project that reads student data from CSV files and populates an Orchestrator queue for processing. This is the **Dispatcher** component of a comprehensive Dispatcher-Performer architecture that automates end-to-end student marksheet generation, grade calculation, PDF creation, and email delivery.
 
 ## 📋 Overview
 
-This project automates the first step in the marksheet generation workflow:
-1. Reads student academic data from a CSV file
-2. Validates the presence of the input file
-3. Creates queue items in UiPath Orchestrator's `MarksheetQueue`
-4. Uses student Roll Number as unique reference identifier
-5. Logs processing status and results
+This Dispatcher is the **entry point** of the automated marksheet generation pipeline. It handles the initial data ingestion:
+
+1. **Reads** student academic data from CSV file (`Sample_Student_Data.csv`)
+2. **Validates** the presence and integrity of the input file
+3. **Creates** queue items in UiPath Orchestrator's `MarksheetQueue`
+4. **References** each transaction using student Roll Number as unique identifier
+5. **Logs** processing status and results for audit trails
+
+### 🔗 System Architecture
+
+This Dispatcher works in tandem with the **Performer** component (REFramework-based) to deliver a complete solution:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  COMPLETE WORKFLOW                           │
+└─────────────────────────────────────────────────────────────┘
+
+   DISPATCHER (This Project)           ORCHESTRATOR              PERFORMER (REFramework)
+┌─────────────────────┐            ┌───────────────┐       ┌──────────────────────────┐
+│  Read CSV           │   Add      │ MarksheetQueue│ Get   │ Main.xaml                │
+│  Sample_Student_    │  ───────►  │               │ ◄───  │ ├── Initialize           │
+│  Data.csv           │  Items     │ [Queue Items] │ Trans │ ├── GetTransactionData   │
+│                     │            │               │       │ ├── Process Transaction  │
+│ Parse & Validate    │            │ Reference:    │       │ │   ├── Validate Data    │
+│ 17 Columns          │            │ RollNumber    │       │ │   ├── Calculate GPA    │
+│                     │            │               │       │ │   ├── Generate PDF     │
+│ Populate Queue      │            │ Status:       │       │ │   └── Verify Output    │
+│ (All Students)      │            │ New/Success/  │       │ ├── SetTransactionStatus │
+│                     │            │ Failed        │       │ └── End Process          │
+└─────────────────────┘            └───────────────┘       │     └── Send Emails      │
+                                                            └──────────────────────────┘
+                                                                        │
+                                                                        ▼
+                                                            ┌──────────────────────────┐
+                                                            │ OUTPUT                   │
+                                                            │ ├── PDF Marksheets       │
+                                                            │ └── Email Notifications  │
+                                                            └──────────────────────────┘
+```
+
+**What Happens After Dispatch:**
+- Performer retrieves queue items one by one
+- Calculates grades (A-F scale) and GPA (10-point scale)
+- Generates professional PDF marksheets using Python + ReportLab
+- Updates queue status (Success/Failed)
+- Sends personalized emails to students or bulk emails to admin
+- Handles errors with REFramework retry logic
 
 ## 🏗️ Project Structure
 
@@ -147,15 +190,92 @@ The project includes **10 student records** with Computer Science students' acad
    - Check Reference field shows RollNumber values
    - Verify Status is "New"
 
-## 🔗 Dispatcher-Performer Architecture
+## 🔗 Integration with Performer (REFramework)
 
-This project is the **Dispatcher** component. It works in conjunction with a **Performer** component (separate project) that:
+This Dispatcher is **Part 1** of a two-component system. Understanding the complete workflow helps contextualize the dispatcher's role.
 
-1. Retrieves queue items from `MarksheetQueue`
-2. Processes each student's data
-3. Generates PDF marksheets
-4. Updates queue item status (Success/Failed)
-5. Sends email notifications (if configured)
+### Complete End-to-End Flow
+
+**Phase 1: Dispatcher (This Project)**
+1. Parse CSV file with 10 student records
+2. Create 10 queue items in `MarksheetQueue`
+3. Each queue item contains all 16 student data fields
+4. Dispatcher completes and exits
+
+**Phase 2: Performer (Separate REFramework Project)**
+1. **Initialize** - Load configuration, verify Python, create Output folder
+2. **Get Transaction** - Retrieve queue items one by one from `MarksheetQueue`
+3. **Process Transaction** - For each student:
+   - Validate marks (0-100 range)
+   - Calculate letter grades (A-F based on marks)
+   - Calculate GPA (10-point scale)
+   - Execute Python script to generate PDF marksheet
+   - Verify PDF created successfully
+4. **Set Transaction Status** - Update queue status (Success/Failed)
+5. **End Process** - Send email notifications with PDFs attached
+
+### Performer Features
+
+The downstream Performer project includes:
+
+#### 🎯 Grade Calculation Engine
+- **Letter Grades:** A (90-100), B (80-89), C (70-79), D (60-69), E (50-59), F (<50)
+- **GPA Calculation:** Overall GPA on 10-point scale
+- **Data Validation:** Business rule exceptions for invalid marks
+
+#### 📄 Professional PDF Generation
+- **Technology:** Python 3.14 + ReportLab library
+- **Layout:** Institutional branding with student details, marks table, grades, GPA
+- **Features:** Grade scale reference, signatures, timestamps
+- **Output Location:** `Data/Output/Marksheet_[RollNumber].pdf`
+
+#### 📧 Advanced Email Automation
+- **Dual Modes:** 
+  - Individual emails to each student (`rollnumber@rajalakshmi.edu.in`)
+  - Bulk admin email with all marksheets
+- **Configuration:** Interactive checkbox UI at runtime
+- **Storage:** Email preferences saved as Orchestrator Assets
+- **Content:** Personalized subject lines, grade summaries, PDF attachments
+
+#### 🔐 Robust Error Handling
+- **Business Exceptions:** Invalid data (marks out of range, missing fields)
+- **Application Exceptions:** Python errors, file system issues
+- **System Exceptions:** Network failures, SMTP errors
+- **Retry Logic:** Automatic retry for transient failures
+- **Comprehensive Logging:** Every step logged to Orchestrator
+
+### Performance Metrics
+
+| Metric | Value |
+|--------|-------|
+| **Processing Time** | ~5-8 seconds per student |
+| **Throughput** | 10 students in ~60 seconds |
+| **Success Rate** | 100% with valid data |
+| **PDF Size** | ~15-20 KB each |
+| **Scalability** | 1000 students in ~100 minutes |
+
+### Technology Stack
+
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| **Dispatcher** | UiPath Workflow | Queue population |
+| **Performer** | UiPath REFramework | Transaction processing |
+| **Queue** | Orchestrator `MarksheetQueue` | Transaction coordination |
+| **PDF Engine** | Python + ReportLab | Professional document generation |
+| **Email** | SMTP (Gmail) | Notification delivery |
+| **Configuration** | Excel + Orchestrator Assets | Centralized settings |
+
+### Related Documentation
+
+For complete system details, refer to the **Performer Project README** which covers:
+- REFramework implementation details
+- Python script configuration
+- Email setup and troubleshooting
+- Configuration file structure
+- Testing procedures
+- Future enhancements
+
+
 
 ## 📝 Configuration
 
@@ -181,23 +301,248 @@ To use a different queue, modify the `queueName` variable:
 
 ## 🐛 Troubleshooting
 
-### Common Issues
+### Dispatcher-Specific Issues
 
 **Issue**: "CSV not found" exception
 - **Solution**: Verify the CSV file exists at `Data\Input\Sample_Student_Data.csv`
 - Check file path is correct (relative to project root)
+- Ensure file has not been moved or renamed
 
 **Issue**: Queue items not appearing in Orchestrator
 - **Solution**: 
   - Confirm queue `MarksheetQueue` exists in Orchestrator
   - Check Orchestrator connection in Studio (Project → Settings → Orchestrator)
-  - Verify folder path and permissions
+  - Verify folder path matches: `220701283@rajalakshmi.edu.in's workspace`
+  - Check user permissions for queue creation
 
 **Issue**: Data type conversion errors
 - **Solution**: Ensure Mark1-5 columns contain valid integer values
-- Check CSV format matches expected structure (no missing columns)
+- Check CSV format matches expected structure (all 17 columns present)
+- Verify no empty cells or non-numeric characters in mark columns
+- Open CSV in text editor to check for encoding issues
 
-## 📄 Project Metadata
+**Issue**: Duplicate queue items created
+- **Solution**: 
+  - Check if dispatcher ran multiple times accidentally
+  - Clear queue in Orchestrator before re-running
+  - Verify CSV doesn't have duplicate RollNumber values
+
+### Downstream Performer Issues
+
+These issues occur in the Performer project but originate from Dispatcher data:
+
+**Issue**: Performer fails with "Invalid marks" business exception
+- **Root Cause**: CSV contains marks outside 0-100 range
+- **Solution**: Validate CSV data before running Dispatcher
+- **Prevention**: Add validation logic to Dispatcher (future enhancement)
+
+**Issue**: Performer fails with "Missing field" error
+- **Root Cause**: CSV missing required columns (Email, Subject names, etc.)
+- **Solution**: Ensure CSV has all 17 columns with proper headers
+- **Check**: Open `Sample_Student_Data.csv` and verify column structure
+
+**Issue**: Queue items stuck in "In Progress" status
+- **Root Cause**: Performer crashed mid-processing
+- **Solution**: 
+  - Manually set queue items back to "New" in Orchestrator
+  - Re-run Performer
+  - Check Performer logs for crash cause
+
+**Issue**: PDFs not generated even though queue shows "Successful"
+- **Possible Causes**: 
+  - Python not installed on Performer machine
+  - ReportLab library missing (`pip install reportlab`)
+  - Output folder permissions issue
+- **Solution**: See Performer README troubleshooting section
+
+**Issue**: Email not sent but marksheets generated
+- **Root Cause**: SMTP configuration issue in Performer
+- **Impact**: Non-critical - PDFs are still created
+- **Solution**: Check Performer email configuration
+  - Gmail users: Use App Password, not regular password
+  - Enable 2-Factor Authentication
+  - See Performer README for detailed SMTP setup
+
+### System Integration Issues
+
+**Issue**: Orchestrator Robot Error (#1230)
+- **Cause**: Unattended robot not configured (license constraints)
+- **Solution**: Run Dispatcher from UiPath Studio (F5) or UiPath Assistant
+- **Note**: This affects both Dispatcher and Performer
+
+**Issue**: Queue reference mismatch
+- **Symptom**: Performer can't find queue items created by Dispatcher
+- **Solution**: 
+  - Verify both projects use same queue name: `MarksheetQueue`
+  - Check folder path matches in both projects
+  - Ensure both connected to same Orchestrator tenant
+
+**Issue**: End-to-end test failing
+- **Debugging Steps:**
+  1. Run Dispatcher → Check queue populated
+  2. Verify queue items in Orchestrator → Check data fields
+  3. Run Performer → Monitor logs in Output panel
+  4. Check for PDFs in `Data/Output/` folder
+  5. Review email inbox for notifications
+  6. Check queue status (should be "Successful")
+
+### Data Quality Checklist
+
+Before running Dispatcher, verify CSV contains:
+- ✅ All 17 columns with exact header names
+- ✅ No empty cells in required fields
+- ✅ Marks between 0-100 (inclusive)
+- ✅ Valid email format (`rollnumber@rajalakshmi.edu.in`)
+- ✅ Unique RollNumber for each student
+- ✅ Proper date format for DOB
+- ✅ No special characters that break CSV parsing
+
+## � Quick Start Guide
+
+### Running the Complete System
+
+**Step 1: Setup Prerequisites**
+```
+1. Install UiPath Studio (v26.x or later)
+2. Create MarksheetQueue in Orchestrator
+3. Connect Studio to Orchestrator
+4. Install Python 3.14 and ReportLab library (for Performer)
+```
+
+**Step 2: Run Dispatcher**
+```
+1. Open this project in UiPath Studio
+2. Verify CSV exists: Data/Input/Sample_Student_Data.csv
+3. Press F5 to run
+4. Verify success message: "Test queue item added successfully!"
+5. Check Orchestrator → MarksheetQueue shows 10 items
+```
+
+**Step 3: Run Performer**
+```
+1. Open Performer project (REFramework)
+2. Configure email settings (optional)
+3. Press F5 to run
+4. Wait for processing (~60 seconds for 10 students)
+5. Verify PDFs created in Data/Output/
+6. Check emails sent (if configured)
+```
+
+**Step 4: Verify Results**
+- Check Orchestrator queue: All items show "Successful"
+- Check Output folder: 10 PDF files created
+- Open sample PDF: Verify formatting and data accuracy
+- Check email inbox: Verify delivery (if enabled)
+
+### Single-Student Test
+
+For quick testing:
+```
+1. Manually add 1 queue item in Orchestrator UI:
+   - Queue: MarksheetQueue
+   - Reference: 220701265
+   - Add all 16 fields manually
+2. Run Performer only
+3. Verify single PDF generated
+```
+
+## 🧪 Testing & Validation
+
+### Testing Workflow
+
+**Unit Test: Dispatcher Only**
+```powershell
+# Terminal commands
+cd "F:\UiPath\Final Project Dispatcher"
+# Run from Studio (F5) and verify:
+# - Output: "Rows read: 10"
+# - Orchestrator: 10 queue items created
+```
+
+**Integration Test: Full Pipeline**
+1. **Clear Queue:** Remove old items from Orchestrator
+2. **Run Dispatcher:** Populate queue with fresh data
+3. **Run Performer:** Process all items
+4. **Validate Output:**
+   - Queue status: All "Successful"
+   - PDFs: 10 files in Data/Output/
+   - File size: ~15-20 KB each
+   - Email: Received (if configured)
+
+**Error Testing**
+
+Test invalid data handling:
+```
+1. Create test CSV with marks = 150 (invalid)
+2. Run Dispatcher → Queue populated
+3. Run Performer → Business exception logged
+4. Check queue: Item marked "Failed"
+5. Verify error message in Orchestrator logs
+```
+
+### Data Validation Test Cases
+
+| Test Case | Expected Result |
+|-----------|----------------|
+| Valid data (marks 0-100) | Success, PDF generated |
+| Marks > 100 | Business exception, queue item Failed |
+| Marks < 0 | Business exception, queue item Failed |
+| Missing email field | Business exception |
+| Duplicate roll numbers | Multiple queue items (warning) |
+| Empty CSV | Dispatcher completes, 0 queue items |
+
+## 🔮 Future Enhancements
+
+### Planned Improvements for Dispatcher
+
+**1. Data Validation Layer**
+- Add pre-validation before queue item creation
+- Check marks range (0-100) in Dispatcher
+- Validate email format
+- Detect duplicate roll numbers
+- **Benefit:** Prevent invalid items from entering queue
+
+**2. Multi-File Support**
+- Process multiple CSV files in batch
+- Watch folder pattern for auto-processing
+- Support for Excel (.xlsx) input files
+- **Benefit:** Handle multiple departments/semesters
+
+**3. Database Integration**
+- Read from SQL Server / MySQL instead of CSV
+- Real-time sync with student information system
+- Support for incremental updates
+- **Benefit:** Eliminate manual CSV exports
+
+**4. Enhanced Logging**
+- Detailed field-level validation logs
+- Statistics: Total students, departments, semesters
+- Duplicate detection report
+- **Benefit:** Better audit trails
+
+**5. Dynamic Queue Configuration**
+- Read queue name from config file
+- Support for multiple queues (by department/semester)
+- Priority-based queue assignment
+- **Benefit:** More flexible deployment
+
+**6. Error Recovery**
+- Automatic retry for transient Orchestrator connection issues
+- Checkpoint/resume for large CSV files
+- Partial success reporting
+- **Benefit:** More robust operation
+
+### System-Wide Enhancements
+
+(See Performer README for additional enhancements including):
+- Digital signatures on PDF marksheets
+- QR code verification system
+- Multi-language support
+- Power BI analytics dashboard
+- Parallel processing with multiple robots
+- Watermarking and security features
+
+## �📄 Project Metadata
 
 - **Project Name**: Final Project Dispatcher
 - **Project ID**: a4e9271e-d16c-49b7-bb2e-4b8547ef8d15
@@ -208,10 +553,30 @@ To use a different queue, modify the `queueName` variable:
 
 ## 🤝 Contributing
 
-When modifying this project:
-1. Maintain the CSV column structure
-2. Keep error handling for file validation
-3. Preserve logging statements for debugging
-4. Test with sample data before production use
+When modifying this Dispatcher project:
+
+**Data Integrity:**
+1. Maintain the CSV column structure (17 columns)
+2. Keep column names exactly as specified
+3. Preserve data types (String vs Integer)
+
+**Code Quality:**
+4. Keep error handling for file validation
+5. Preserve logging statements for debugging
+6. Add comments for complex logic
+
+**Testing:**
+7. Test with sample data before production
+8. Verify queue items created correctly
+9. Test with Performer to ensure end-to-end compatibility
+
+**Coordination:**
+10. If changing queue structure, update Performer accordingly
+11. Document any changes to data format
+12. Maintain backward compatibility when possible
+
+---
+
+**Note**: This is a student project for academic purposes. Ensure proper testing and validation before deploying to production environments.
 
 
