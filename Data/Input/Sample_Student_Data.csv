@@ -1,11 +1,11 @@
-Name,RollNumber,DOB,Semester,Year,Department,Subject1,Mark1,Subject2,Mark2,Subject3,Mark3,Subject4,Mark4,Subject5,Mark5
-Alice Johnson,2024001,15-Jan-2000,Fall 2024,2024,Computer Science,Mathematics,95,Physics,88,Chemistry,82,English,75,Programming,92
-Bob Smith,2024002,22-Feb-2001,Fall 2024,2024,Electrical Engineering,Circuit Theory,78,Electronics,85,Mathematics,90,Physics,72,Digital Systems,88
-Carol Williams,2024003,10-Mar-2000,Fall 2024,2024,Mechanical Engineering,Thermodynamics,92,Mechanics,87,Materials Science,80,Mathematics,94,CAD Design,89
-David Brown,2024004,05-Apr-2001,Fall 2024,2024,Computer Science,Data Structures,96,Algorithms,93,Database Systems,91,Web Development,88,Machine Learning,95
-Emma Davis,2024005,18-May-2000,Fall 2024,2024,Civil Engineering,Structural Analysis,84,Concrete Technology,79,Surveying,86,Hydraulics,81,Construction Management,83
-Frank Miller,2024006,30-Jun-2001,Fall 2024,2024,Computer Science,Operating Systems,65,Computer Networks,70,Software Engineering,68,Cloud Computing,72,Security,66
-Grace Wilson,2024007,12-Jul-2000,Fall 2024,2024,Electronics,Signal Processing,58,Communication Systems,62,Embedded Systems,55,Microprocessors,60,Control Systems,59
-Henry Moore,2024008,25-Aug-2001,Fall 2024,2024,Information Technology,Web Technologies,82,Mobile Computing,85,Big Data,88,AI Fundamentals,90,DevOps,87
-Ivy Taylor,2024009,08-Sep-2000,Fall 2024,2024,Computer Science,Python Programming,97,Java Programming,94,C++ Programming,96,JavaScript,92,Software Testing,95
-Jack Anderson,2024010,14-Oct-2001,Fall 2024,2024,Mechanical Engineering,Fluid Mechanics,45,Heat Transfer,48,Manufacturing,42,Quality Control,46,Industrial Engineering,44
+Name,RollNumber,DOB,Semester,Year,Department,Subject1,Mark1,Subject2,Mark2,Subject3,Mark3,Subject4,Mark4,Subject5,Mark5,Email
+Sharukeshwar P,220701265,15-Jan-2004,Fall 2024,2024,Computer Science,Data Structures,95,Database Management,88,Operating Systems,82,Computer Networks,75,Python Programming,92,220701265@rajalakshmi.edu.in
+Shaun Paul Moses,220701266,20-Feb-2004,Fall 2024,2024,Computer Science,Data Structures,78,Database Management,85,Operating Systems,90,Computer Networks,70,Python Programming,88,220701266@rajalakshmi.edu.in
+Shivanesh P,220701268,10-Mar-2004,Fall 2024,2024,Computer Science,Data Structures,91,Database Management,84,Operating Systems,87,Computer Networks,89,Python Programming,93,220701268@rajalakshmi.edu.in
+Shreyas Gowd L C,220701272,25-Apr-2004,Fall 2024,2024,Computer Science,Data Structures,68,Database Management,72,Operating Systems,75,Computer Networks,65,Python Programming,70,220701272@rajalakshmi.edu.in
+Shri Ram Sethu S,220701273,05-May-2004,Fall 2024,2024,Computer Science,Data Structures,88,Database Management,91,Operating Systems,85,Computer Networks,87,Python Programming,90,220701273@rajalakshmi.edu.in
+Someshwar K M,220701283,12-Jun-2004,Fall 2024,2024,Computer Science,Data Structures,97,Database Management,95,Operating Systems,98,Computer Networks,94,Python Programming,96,220701283@rajalakshmi.edu.in
+Umesh Subramaniam S,220701307,18-Jul-2004,Fall 2024,2024,Computer Science,Data Structures,73,Database Management,76,Operating Systems,78,Computer Networks,71,Python Programming,74,220701307@rajalakshmi.edu.in
+Yashwanth Ramesh,220701326,22-Aug-2004,Fall 2024,2024,Computer Science,Data Structures,85,Database Management,82,Operating Systems,88,Computer Networks,84,Python Programming,86,220701326@rajalakshmi.edu.in
+Yuven Senthilkumar,220701330,30-Sep-2004,Fall 2024,2024,Computer Science,Data Structures,92,Database Management,89,Operating Systems,91,Computer Networks,93,Python Programming,94,220701330@rajalakshmi.edu.in
+Shiiv R S,220701331,14-Oct-2004,Fall 2024,2024,Computer Science,Data Structures,80,Database Management,83,Operating Systems,79,Computer Networks,81,Python Programming,82,220701331@rajalakshmi.edu.in
