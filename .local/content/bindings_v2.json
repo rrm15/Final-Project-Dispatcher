@@ -1,0 +1,27 @@
+{
+  "version": "2.0",
+  "resources": [
+    {
+      "activityDisplayName": "Add Queue Item",
+      "activityId": "AddQueueItem_1",
+      "resource": "queue",
+      "key": "220701283@rajalakshmi.edu.in's workspace.MarksheetQueue",
+      "id": "queue220701283@rajalakshmi.edu.in's workspace.MarksheetQueue220701283@rajalakshmi.edu.in's workspaceFalseMarksheetQueueFalse",
+      "value": {
+        "folderPath": {
+          "defaultValue": "220701283@rajalakshmi.edu.in's workspace",
+          "isExpression": false,
+          "displayName": "Folder Path"
+        },
+        "name": {
+          "defaultValue": "MarksheetQueue",
+          "isExpression": false,
+          "displayName": "Queue name"
+        }
+      },
+      "metadata": {
+        "BindingsVersion": "2.2"
+      }
+    }
+  ]
+}
