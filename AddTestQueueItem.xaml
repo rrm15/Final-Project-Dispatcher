@@ -89,7 +89,7 @@
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="csvPath">
         <Variable.Default>
-          <Literal x:TypeArguments="x:String">F:\UiPath\Final Project Dispatcher\Data\Input\Sample_Student_Data.csv</Literal>
+          <Literal x:TypeArguments="x:String">F:/UiPath/Final Project Dispatcher/Data/Input/Sample_Student_Data.csv</Literal>
         </Variable.Default>
       </Variable>
       <Variable x:TypeArguments="x:String" Default="MarksheetQueue" Name="queueName" />
